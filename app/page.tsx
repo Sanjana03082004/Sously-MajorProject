@@ -3,7 +3,8 @@
 import LogoutButton from "@/components/LogoutButton";
 import CallScreen from "@/components/ui/CallScreen";
 import { useDailyRedirect } from "@/hooks/useDailyRedirect"
-
+import ProfileMenu from "@/components/ui/ProfileMenu";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -245,32 +246,42 @@ export default function HomePage() {
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
       {/* Header */}
       <header className="bg-white/80 backdrop-blur-sm border-b border-emerald-100 sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Brain className="h-8 w-8 text-emerald-600" />
-            <h1 className="text-2xl font-bold text-gray-800">MindMate</h1>
-            {context.userName && (
-              <Badge variant="outline" className="ml-2">
-                Hi {context.userName}! 👋
-              </Badge>
-            )}
-          </div>
-          <div className="flex items-center space-x-4">
-            <Badge variant="secondary" className="bg-emerald-100 text-emerald-700">
-              {isListening ? "I'm listening..." : callActive ? "Connected" : "Ready to chat"}
-            </Badge>
-            <div className="flex items-center space-x-4">
-  {/* ...other header items... */}
-  <LogoutButton className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 text-gray-800" />
+  <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+    {/* Left section */}
+    <div className="flex items-center space-x-2">
+      <Image
+  src="/soulsy-logo2.png"
+  alt="Soulsy Logo"
+  width={50}
+  height={50}
+  className="rounded-full"
+/>
+      <h1 className="text-2xl font-bold text-gray-800">Soulsy</h1>
+      {context.userName && (
+        <Badge variant="outline" className="ml-2 text-emerald-800">
+          Hi {context.userName}! 👋
+        </Badge>
+      )}
+    </div>
+
+    {/* Right section */}
+    <div className="flex items-center space-x-4">
+      <Badge variant="secondary" className="bg-emerald-100 text-emerald-700">
+        {isListening ? "I'm listening..." : callActive ? "Connected" : "Ready to chat"}
+      </Badge>
+      <div className="flex items-center gap-2">     {/* ✅ Show username beside profile icon */}
+      <span className="text-gray-800 font-medium">
+  {context.userName || "You"}
+</span>
+
+<ProfileMenu />
 </div>
-            <Link href="/settings">
-              <Button variant="ghost" size="icon">
-                <Settings className="h-5 w-5" />
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </header>
+
+     
+    </div>
+  </div>
+</header>
+
 
       {/* Permission Alert */}
       {showPermissionAlert && (
@@ -323,7 +334,7 @@ export default function HomePage() {
                 <div>
                   <div className="text-sm text-gray-600 mb-2 flex items-center">
                     <Brain className="h-4 w-4 mr-1 text-emerald-600" />
-                    MindMate responds:
+                    Soulsy responds:
                     {isSpeaking && <Volume2 className="h-4 w-4 ml-2 animate-pulse text-emerald-600" />}
                   </div>
                   <div className="bg-emerald-50 p-4 rounded-lg text-emerald-800 border-l-4 border-emerald-400">
@@ -498,7 +509,7 @@ export default function HomePage() {
         >
           <div className="pt-16 h-full flex items-center justify-center">
             <CallScreen
-              contactName="MindMate"
+              contactName="Soulsy"
               voiceLang="en-US"
               autoStart
               hideCallButton

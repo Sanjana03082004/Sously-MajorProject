@@ -31,25 +31,29 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.name = user.name;
-        token.email = user.email;
-        // token.age = (user as any).age
-        // token.gender = (user as any).gender
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.name = token.name as string;
-        session.user.email = token.email as string;
-        // (Optional) expose extra fields to the client:
-        // (session as any).age = token.age
-        // (session as any).gender = token.gender
-      }
-      return session;
-    },
+  
+    callbacks: {
+  async jwt({ token, user }) {
+    if (user) {
+      token.name = user.name;
+      token.email = user.email;
+      (token as any).emergencyContacts = (user as any).emergencyContacts || [];
+    }
+    return token;
   },
-};
+
+  async session({ session, token }) {
+    // ✅ Ensure session.user exists — important fix
+    session.user = {
+      name: token.name as string,
+      email: token.email as string,
+    };
+
+    // ✅ Optional: pass emergency contacts too
+    (session as any).emergencyContacts = (token as any).emergencyContacts || [];
+
+    return session;
+  },
+}
+
+}

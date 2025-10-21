@@ -586,7 +586,8 @@
 //   )
 // }
 "use client"
-
+import { useRouter } from "next/navigation"
+import { ArrowLeft } from "lucide-react"
 import { useState, useEffect } from "react"
 import { MoodCalendar } from "@/components/MoodCalendar"
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts"
@@ -617,6 +618,7 @@ export default function InsightsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [checkedIn, setCheckedIn] = useState(false)
   const [loading, setLoading] = useState(true)
+  const router = useRouter()
 
   const { transcript, isListening, startListening, stopListening, resetTranscript } =
     useSpeechRecognition()
@@ -692,7 +694,17 @@ export default function InsightsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 to-pink-50 p-6">
-      <div className="max-w-5xl mx-auto space-y-10">
+    {/* 🔙 Top bar with back button */}
+    <div className="flex items-center mb-4">
+      <button
+        onClick={() => router.back()}
+        className="flex items-center gap-1 text-pink-600 hover:text-pink-800 font-medium"
+      >
+        <ArrowLeft className="h-5 w-5" />
+        Back
+      </button>
+    </div>
+         <div className="max-w-5xl mx-auto space-y-10">
         {/* 🌸 Mood Calendar */}
         <MoodCalendar moods={moods} />
 
