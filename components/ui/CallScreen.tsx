@@ -166,16 +166,21 @@ const shuttingDownRef = useRef(false);               // <— ADD THIS
   }, []);
 
   // Gentle blink loop
-  useEffect(() => {
-    let t: number | null = null;
-    const loop = () => {
-      setBlink(true);
-      setTimeout(() => setBlink(false), 120);
-      t = window.setTimeout(loop, 2000 + Math.random() * 4000);
-    };
-    t = window.setTimeout(loop, 1300);
-    return () => t && clearTimeout(t);
-  }, []);
+ useEffect(() => {
+  let t: ReturnType<typeof setInterval> | null = null;
+
+  const loop = () => {
+    setBlink(true);
+    setTimeout(() => setBlink(false), 500);
+  };
+
+  t = setInterval(loop, 2000);
+
+  return () => {
+    if (t) clearInterval(t);
+  };
+}, []);
+
   
 
   // Auto-start call on mount if requested
@@ -484,7 +489,8 @@ if (risk === "high") {
             </div>
           ) : (
             <div className={`${isConnected ? "scale-105" : "scale-100"} transition-transform`}>
-              <CuteAvatar blink={blink} mouth={mouth} hairStyle="sidebang" hairColor="#6B4D3E" />
+              <CuteAvatar mouth={mouth} hairColor="#6B4D3E" />
+
             </div>
           )}
         </div>
