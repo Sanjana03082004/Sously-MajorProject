@@ -1,6 +1,8 @@
 
 "use client";
 import LogoutButton from "@/components/LogoutButton";
+import { useToast } from "@/components/ui/use-toast";
+
 import CallScreen from "@/components/ui/CallScreen";
 import { useDailyRedirect } from "@/hooks/useDailyRedirect"
 import ProfileMenu from "@/components/ui/ProfileMenu";
@@ -28,6 +30,7 @@ export default function HomePage() {
     focusHours: null,
     tasksCompleted: 0,
   });
+  const { toast } = useToast();
 
   const [callActive, setCallActive] = useState(false);
   const [aiResponse, setAiResponse] = useState("");
@@ -132,20 +135,73 @@ export default function HomePage() {
 
   // IMPORTANT: do not process transcript when CallScreen overlay is active
   useEffect(() => {
-    if (!transcript || transcript.length <= 5) return;
-    if (callActive) return;
+  if (!transcript || transcript.length <= 5) return;
+  if (callActive) return;
 
-    const mood = analyzeMood(transcript);
-    const command = processCommand(transcript);
+  // 🚨 Emergency voice phrase detection
+  (async () => {
+    const lowerText = transcript.toLowerCase();
+    const emergencyPhrases = [
+      "i want to die",
+      "help me",
+      "i am not okay",
+      "i need help",
+      "emergency",
+      "please help",
+      "i want to end my life",
+    ];
 
-    if (command) {
-      handleVoiceCommand(command);
-    } else {
-      const response = generateNaturalResponse(transcript, mood);
-      setAiResponse(response);
-      speak(response);
+    const isEmergency = emergencyPhrases.some((phrase) =>
+      lowerText.includes(phrase)
+    );
+
+    if (isEmergency) {
+      console.log("🚨 Emergency detected");
+      try {
+        const res = await fetch("/api/emergency-alert", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: transcript }),
+        });
+
+        if (res.ok) {
+          toast({
+            title: "🚨 Emergency Alert Sent",
+            description: "We’ve notified your emergency contacts.",
+            className: "bg-red-50 border border-red-200 text-red-800",
+          });
+        } else {
+          toast({
+            title: "⚠️ Emergency Alert Failed",
+            description: "We couldn’t reach your contacts. Try again.",
+            variant: "destructive",
+          });
+        }
+      } catch (error) {
+        toast({
+          title: "❌ Network Error",
+          description: "Couldn’t send alert. Please check your internet.",
+          variant: "destructive",
+        });
+      }
     }
-  }, [transcript, callActive]); // ← guard added
+  })();
+
+  // 🧠 Normal AI + mood processing below
+  const mood = analyzeMood(transcript);
+  const command = processCommand(transcript);
+
+  if (command) {
+    handleVoiceCommand(command);
+  } else {
+    const response = generateNaturalResponse(transcript, mood);
+    setAiResponse(response);
+    speak(response);
+  }
+}, [transcript, callActive]);
+
+
+
 
   const handleVoiceCall = async () => {
     if (!isSupported) {
@@ -243,20 +299,26 @@ export default function HomePage() {
 
   return (
     
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
+    <div className="min-h-screen bg-gradient-to-br from-pink-200 via-rose-20 to-emerald-200">
+
+
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-emerald-100 sticky top-0 z-50">
+      <header className="bg-gradient-to-r from-pink-50 via-rose-50 to-emerald-50 backdrop-blur-sm shadow-md sticky top-0 z-50 border-b border-pink-200">
+
   <div className="container mx-auto px-4 py-4 flex items-center justify-between">
     {/* Left section */}
     <div className="flex items-center space-x-2">
       <Image
-  src="/soulsy-logo2.png"
+  src="/soulsylogo8.png"
   alt="Soulsy Logo"
   width={50}
   height={50}
   className="rounded-full"
 />
-      <h1 className="text-2xl font-bold text-gray-800">Soulsy</h1>
+      <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-800 to-rose-500 bg-clip-text text-transparent">
+  Soulsy
+</h1>
+
       {context.userName && (
         <Badge variant="outline" className="ml-2 text-emerald-800">
           Hi {context.userName}! 👋
@@ -380,7 +442,7 @@ export default function HomePage() {
 
   {/* Schedule */}
   <Link href="/calendar">
-    <Card className="hover:shadow-md transition-all cursor-pointer h-full bg-blue-50/30 border border-blue-100 hover:border-blue-200">
+    <Card className="hover:shadow-md transition-all cursor-pointer h-full bg-blue-50/60 border border-blue-100 hover:border-blue-200">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center space-x-2 text-lg text-blue-600">
           <Calendar className="h-5 w-5 text-blue-500" />
@@ -397,7 +459,7 @@ export default function HomePage() {
 
   {/* Insights */}
   <Link href="/insights">
-    <Card className="hover:shadow-md transition-all cursor-pointer h-full bg-pink-50/30 border border-pink-100 hover:border-pink-200">
+    <Card className="hover:shadow-md transition-all cursor-pointer h-full bg-pink-50/60 border border-pink-100 hover:border-pink-200">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center space-x-2 text-lg text-pink-600">
           <BarChart3 className="h-5 w-5 text-pink-500" />
@@ -414,7 +476,7 @@ export default function HomePage() {
 
   {/* Focus */}
   <Link href="/focus">
-    <Card className="hover:shadow-md transition-all cursor-pointer h-full bg-orange-50/30 border border-orange-100 hover:border-orange-200">
+    <Card className="hover:shadow-md transition-all cursor-pointer h-full bg-orange-50/60 border border-orange-100 hover:border-orange-200">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center space-x-2 text-lg text-orange-600">
           <Focus className="h-5 w-5 text-orange-500" />

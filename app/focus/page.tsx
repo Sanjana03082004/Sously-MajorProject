@@ -628,7 +628,7 @@ export default function FocusPage() {
         <Alert className="border-orange-200 bg-orange-50 shadow-sm">
           <AlertDescription>
             <Brain className="inline-block h-4 w-4 mr-2 text-orange-600" />
-            <strong>AI Tip:</strong> {quote}
+            <strong>Soulsy Tip:</strong> {quote}
           </AlertDescription>
         </Alert>
 

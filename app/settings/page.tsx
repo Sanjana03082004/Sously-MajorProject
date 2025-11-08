@@ -562,7 +562,7 @@ export default function SettingsPage() {
             </div>
           </div>
           <Badge variant="secondary" className="bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200">
-            MindMate v1.0
+            Soulsy v1.0
           </Badge>
         </div>
       </header>
@@ -580,7 +580,7 @@ export default function SettingsPage() {
                 <span>Voice & AI Settings</span>
               </CardTitle>
               <CardDescription>
-                Configure how MindMate listens and responds to you
+                Configure how Sously listens and responds to you
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -646,7 +646,7 @@ export default function SettingsPage() {
                 <div className="space-y-1">
                   <div className="font-medium">Anonymous Data Sharing</div>
                   <div className="text-sm text-gray-500">
-                    Help improve MindMate by sharing anonymized usage patterns
+                    Help improve Soulsy by sharing anonymized usage patterns
                   </div>
                 </div>
                 <Switch
@@ -665,7 +665,7 @@ export default function SettingsPage() {
                 <span>Notifications & Reminders</span>
               </CardTitle>
               <CardDescription>
-                Customize when and how MindMate reaches out to you
+                Customize when and how Soulsy reaches out to you
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -711,7 +711,7 @@ export default function SettingsPage() {
                 <span>Appearance & Accessibility</span>
               </CardTitle>
               <CardDescription>
-                Customize the look and feel of MindMate
+                Customize the look and feel of Soulsy
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">

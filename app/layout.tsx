@@ -18,8 +18,12 @@
 //     </html>
 //   )
 // }
+
+
 import type { Metadata } from "next";
 import "./globals.css";
+import { Toaster } from "@/components/ui/toaster";
+
 import ThemeWrapper from "@/components/ThemeWrapper";
 
 export const metadata: Metadata = {
@@ -37,7 +41,10 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className="transition-colors duration-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
         <ThemeWrapper>{children}</ThemeWrapper>
+        <Toaster /> {/* ✅ Toast notifications will work globally */}
       </body>
     </html>
   );
 }
+
+
