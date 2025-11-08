@@ -43,7 +43,8 @@ export default function HomePage() {
     useSpeechRecognition();
 
   const { speak, isSpeaking, stop: stopSpeaking } = useTextToSpeech();
-  const { processCommand } = useVoiceCommands();
+  const { processWithAI } = useVoiceCommands();
+
   const { currentMood, analyzeMood, loadMoodData } = useMoodAnalysis();
   const { generateNaturalResponse, context } = useConversationAI();
 
@@ -188,8 +189,10 @@ export default function HomePage() {
   })();
 
   // 🧠 Normal AI + mood processing below
+  // 🧠 Normal AI + mood processing below
+(async () => {
   const mood = analyzeMood(transcript);
-  const command = processCommand(transcript);
+  const command = await processWithAI(transcript);
 
   if (command) {
     handleVoiceCommand(command);
@@ -198,6 +201,8 @@ export default function HomePage() {
     setAiResponse(response);
     speak(response);
   }
+})();
+
 }, [transcript, callActive]);
 
 
