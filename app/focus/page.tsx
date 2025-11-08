@@ -452,7 +452,6 @@ export default function FocusPage() {
   const [timeLeft, setTimeLeft] = useState(25 * 60);
   const [mode, setMode] = useState<"focus" | "break">("focus");
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const [currentSound, setCurrentSound] = useState("lofi");
   const [sessionsCompleted, setSessionsCompleted] = useState(0);
   const [totalFocusTime, setTotalFocusTime] = useState(0);
   const [quote, setQuote] = useState("");
@@ -466,7 +465,10 @@ export default function FocusPage() {
     rain: "/sounds/rain.mp3",
     fire: "/sounds/fire.mp3",
     lofi: "/sounds/lofi.mp3",
-  };
+  } as const;
+  type SoundName = keyof typeof sounds;
+
+const [currentSound, setCurrentSound] = useState<SoundName>("lofi");
 
   const getStressLevel = () => {
     if (currentMood?.energy === "low" || (currentMood?.score && currentMood.score < 6)) return "high";
