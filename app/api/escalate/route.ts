@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongo";
 import { sendEscalationEmail } from "@/lib/mailer";
-import { sendSms, makeCall } from "@/lib/twilio";
+// import { sendSms, makeCall } from "@/lib/twilio";
 
 export const runtime = "nodejs"; // ensures Node APIs available
 
@@ -43,22 +43,22 @@ export async function POST(req: Request) {
     let callOk = false;
 
     // 1) Try SMS to all contacts (if Twilio configured)
-    if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_FROM) {
-      for (const c of contacts) {
-        try {
-          await sendSms(c.phone, alertText);
-          smsOk = true;
-        } catch {}
-      }
+    // if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_FROM) {
+    //   for (const c of contacts) {
+    //     try {
+    //       await sendSms(c.phone, alertText);
+    //       smsOk = true;
+    //     } catch {}
+    //   }
 
-      // 2) Optional: call the first contact
-      if (contacts[0]?.phone && process.env.TWILIO_VOICE_URL) {
-        try {
-          await makeCall(contacts[0].phone);
-          callOk = true;
-        } catch {}
-      }
-    }
+    //   // 2) Optional: call the first contact
+    //   if (contacts[0]?.phone && process.env.TWILIO_VOICE_URL) {
+    //     try {
+    //       await makeCall(contacts[0].phone);
+    //       callOk = true;
+    //     } catch {}
+    //   }
+    //}
 
     // 3) Always send a fallback email to helpline
     const emailOk = await sendEscalationEmail({
