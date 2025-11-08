@@ -529,57 +529,61 @@ const [currentSound, setCurrentSound] = useState<SoundName>("lofi");
     setQuote(quotes[Math.floor(Math.random() * quotes.length)]);
   }, [mode]);
 
-  // ⏱️ timer logic
-  useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
+ // ⏱️ timer logic
+useEffect(() => {
+  let interval: NodeJS.Timeout | null = null;
 
-    if (isActive && timeLeft > 0) {
-      interval = setInterval(() => {
-        setTimeLeft((prev) => {
-          if (mode === "focus") {
-            setTotalFocusTime((prevTotal) => {
-              const newTotal = prevTotal + 1;
-              localStorage.setItem(
-                "mindmate_focus_data",
-                JSON.stringify({
-                  sessionsCompleted,
-                  totalFocusTime: newTotal,
-                })
-              );
-              return newTotal;
-            });
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    } else if (timeLeft === 0) {
-      if (mode === "focus") {
-        setMode("break");
-        setSessionsCompleted((prev) => {
-          const newCount = prev + 1;
-          localStorage.setItem(
-            "mindmate_focus_data",
-            JSON.stringify({
-              sessionsCompleted: newCount,
-              totalFocusTime,
-            })
-          );
-          return newCount;
-        });
-        const adaptiveTiming = getAdaptiveTiming();
-        setTimeLeft(adaptiveTiming.break);
-        speak("Focus complete! Time to take a break.");
-      } else {
-        setMode("focus");
-        const adaptiveTiming = getAdaptiveTiming();
-        setTimeLeft(adaptiveTiming.focus);
-        speak("Break over. Let's get back in the zone!");
-      }
-      setIsActive(false);
+  if (isActive && timeLeft > 0) {
+    interval = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (mode === "focus") {
+          setTotalFocusTime((prevTotal) => {
+            const newTotal = prevTotal + 1;
+            localStorage.setItem(
+              "mindmate_focus_data",
+              JSON.stringify({
+                sessionsCompleted,
+                totalFocusTime: newTotal,
+              })
+            );
+            return newTotal;
+          });
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  } else if (timeLeft === 0) {
+    const adaptiveTiming = getAdaptiveTiming();
+
+    if (mode === "focus") {
+      setMode("break");
+      setSessionsCompleted((prev) => {
+        const newCount = prev + 1;
+        localStorage.setItem(
+          "mindmate_focus_data",
+          JSON.stringify({
+            sessionsCompleted: newCount,
+            totalFocusTime,
+          })
+        );
+        return newCount;
+      });
+      setTimeLeft(adaptiveTiming.break);
+      speak("Focus complete! Time to take a break.");
+    } else {
+      setMode("focus");
+      setTimeLeft(adaptiveTiming.focus);
+      speak("Break over. Let's get back in the zone!");
     }
+    setIsActive(false);
+  }
 
-    return () => interval && clearInterval(interval);
-  }, [isActive, timeLeft, mode]);
+  return () => {
+    if (interval) clearInterval(interval);
+  };
+  // ✅ Add all dependencies you use
+}, [isActive, timeLeft, mode, sessionsCompleted, totalFocusTime, getAdaptiveTiming]);
+
 
   const formatTime = (s: number) => `${Math.floor(s / 60).toString().padStart(2, "0")}:${(s % 60).toString().padStart(2, "0")}`;
 
@@ -674,16 +678,17 @@ const [currentSound, setCurrentSound] = useState<SoundName>("lofi");
                 {soundEnabled ? <Volume2 /> : <VolumeX />}
               </Button>
               <select
-                className="border rounded-md p-1 text-sm text-gray-600"
-                value={currentSound}
-                onChange={(e) => setCurrentSound(e.target.value)}
-              >
-                {Object.keys(sounds).map((k) => (
-                  <option key={k} value={k}>
-                    {k.charAt(0).toUpperCase() + k.slice(1)}
-                  </option>
-                ))}
-              </select>
+  className="border rounded-md p-1 text-sm text-gray-600"
+  value={currentSound}
+  onChange={(e) => setCurrentSound(e.target.value as SoundName)}
+>
+  {Object.keys(sounds).map((k) => (
+    <option key={k} value={k}>
+      {k.charAt(0).toUpperCase() + k.slice(1)}
+    </option>
+  ))}
+</select>
+
             </div>
           </CardContent>
         </Card>
